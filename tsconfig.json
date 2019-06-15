@@ -1,3 +1,11 @@
 {
-  
+  "compilerOptions": {
+    "target": "es5",
+    "noImplicitAny": true,
+    "outDir": "built",
+    "rootDir": "./../",
+    "lib": ["esnext"]
+  },
+  "files": ["./../core/output.ts"],
+  "exclude": []
 }
