@@ -8,9 +8,9 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-// import '../core/output';
-// import '../color-sensor/color';
-// import '../base/shims';
+  // import '../core/output';
+  // import '../color-sensor/color';
+  // import '../base/shims';
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -165,6 +165,13 @@ class Robot {
     let startPos = this.readTacho(side);
     return () => {
       return this.readTacho(side) - startPos > (cm / k) * 360;
+    };
+  }
+
+  untilDegrees(side: Side, dgr: number): () => boolean {
+    let startPos = this.readTacho(side);
+    return () => {
+      return this.readTacho(side) - startPos > dgr;
     };
   }
 }
