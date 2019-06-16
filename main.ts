@@ -50,8 +50,8 @@ interface RobotSettings {
 }
 
 enum Side {
-  Right,
-  Left
+  Left,
+  Right
 }
 
 class Robot {
@@ -86,21 +86,41 @@ class Robot {
       side == Side.Right
         ? this.settings.electronic.rightMotor
         : this.settings.electronic.leftMotor;
-    motor.stop()
+    motor.stop();
   }
 
-  moveWheel(side: Side, speed: number, until: () => boolean = () => false, stop: boolean = true) {
+  moveWheel(
+    side: Side,
+    speed: number,
+    until: () => boolean = () => false,
+    stop: boolean = true
+  ) {
     this.runMotor(side, speed);
     pauseUntil(() => {
       return until();
     });
-    if(stop)this.stopMotor(side)
+    if (stop) this.stopMotor(side);
   }
 
-  untilSeconds(time: number): () => boolean {
-    let startTime = control.millis()
-    return ()=>{
-      return (control.millis() - startTime) < time
-    }
+  moveWheels(
+    speedRight: number,
+    speedLeft: number,
+    until: () => boolean = () => false,
+    stop: boolean = true
+  ) {
+    this.runMotor(Side.Left, speedLeft);
+    this.runMotor(Side.Right, speedRight);
+    pauseUntil(() => {
+      return until();
+    });
+    if (stop) this.stopMotor(Side.Left);
+    if (stop) this.stopMotor(Side.Right);
+  }
+
+  untilTime(time: number): () => boolean {
+    let startTime = control.millis();
+    return () => {
+      return control.millis() - startTime > time;
+    };
   }
 }
