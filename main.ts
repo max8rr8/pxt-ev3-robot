@@ -41,9 +41,9 @@ interface lineSettings {
 
 interface RobotSettings {
   electronic: electronicSettings;
-  constructionSettings: constructionSettings;
-  errorSettings: errorSettings;
-  lineSettings: lineSettings;
+  construction: constructionSettings;
+  error: errorSettings;
+  line: lineSettings;
 }
 
 class Robot {
