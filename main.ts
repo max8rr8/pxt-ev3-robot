@@ -8,9 +8,9 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-import '../core/output';
-import '../color-sensor/color';
-import '../base/shims';
+// import '../core/output';
+// import '../color-sensor/color';
+// import '../base/shims';
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -168,3 +168,4 @@ class Robot {
     };
   }
 }
+ 
