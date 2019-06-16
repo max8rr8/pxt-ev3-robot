@@ -8,10 +8,10 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-import '../core/output';
-import '../color-sensor/color';
-import '../base/shims';
-function pauseUntil(condition: () => boolean, timeOut?: number): void {}
+// import '../core/output';
+// import '../color-sensor/color';
+// import '../base/shims';
+// function pauseUntil(condition: () => boolean, timeOut?: number): void {}
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -89,7 +89,7 @@ class Robot {
         : this.settings.electronic.leftMotor;
 
     let errK =
-      side == Side.Right ? this.settings.error.kRightMotor : this.settings.error.kLeftMotor;
+      side == Side.Right ? this.settings.error.kRightWheel : this.settings.error.kLeftWheel;
     return motor.angle() / errK;
   }
 
