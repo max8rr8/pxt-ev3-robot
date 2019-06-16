@@ -140,4 +140,16 @@ class Robot {
       return this.readDataFromSensor(side) < this.settings.line.black
     }
   }
+
+  untilCm(side: Side, cm: number): () => boolean {
+    let motor =
+    side == Side.Right
+      ? this.settings.electronic.rightMotor
+      : this.settings.electronic.leftMotor;
+    let k = this.settings.construction.wheelDiameter * Math.PI 
+    let startPos = motor.angle() 
+    return () => {
+      return motor.angle() - startPos > (cm / k) * 360  ;
+    };
+  }
 }
