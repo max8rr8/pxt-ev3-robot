@@ -18,12 +18,36 @@ interface electronicSettings {
   leftSensor: sensors.ColorSensor;
 }
 
+interface constructionSettings {
+  wheelDiameter: number;
+  distanceBeetwenWheels: number;
+  distanceBeetwenBaseAndSensors: number;
+}
+
+interface errorSettings {
+  kRightWheel: number;
+  kLeftWheel: number;
+  kRightSensor: number;
+  kLeftSensor: number;
+}
+
+interface lineSettings {
+  kP: number;
+  kI: number;
+  kD: number;
+  black: number;
+  white: number;
+}
+
 interface RobotSettings {
   electronic: electronicSettings;
+  constructionSettings: constructionSettings;
+  errorSettings: errorSettings;
+  lineSettings: lineSettings;
 }
 
 class Robot {
-  settings: RobotSettings
+  settings: RobotSettings;
   constructor(settings: RobotSettings) {
     this.settings = settings;
   }
