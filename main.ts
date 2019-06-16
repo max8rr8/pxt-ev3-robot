@@ -8,10 +8,10 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-// import '../core/output';
-// import '../color-sensor/color';
-// import '../base/shims';
-// function pauseUntil(condition: () => boolean, timeOut?: number): void {}
+import '../core/output';
+import '../color-sensor/color';
+import '../base/shims';
+function pauseUntil(condition: () => boolean, timeOut?: number): void {}
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -82,6 +82,17 @@ class Robot {
     return sensor.reflectedLight() * errK;
   }
 
+  readTacho(side: Side): number {
+    let motor =
+      side == Side.Right
+        ? this.settings.electronic.rightMotor
+        : this.settings.electronic.leftMotor;
+
+    let errK =
+      side == Side.Right ? this.settings.error.kRightMotor : this.settings.error.kLeftMotor;
+    return motor.angle() / errK;
+  }
+
   runMotor(side: Side, speed: number) {
     let motor =
       side == Side.Right
@@ -146,14 +157,10 @@ class Robot {
   }
 
   untilCm(side: Side, cm: number): () => boolean {
-    let motor =
-    side == Side.Right
-      ? this.settings.electronic.rightMotor
-      : this.settings.electronic.leftMotor;
     let k = this.settings.construction.wheelDiameter * Math.PI 
-    let startPos = motor.angle() 
+    let startPos = this.readTacho(side)
     return () => {
-      return motor.angle() - startPos > (cm / k) * 360  ;
+      return this.readTacho(side) - startPos > (cm / k) * 360  ;
     };
   }
 }
