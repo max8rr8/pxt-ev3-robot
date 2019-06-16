@@ -8,10 +8,9 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-// import '../core/output';
-// import '../color-sensor/color';
-// import '../base/shims';
-// function pauseUntil(condition: () => boolean, timeOut?: number): void {}
+import '../core/output';
+import '../color-sensor/color';
+import '../base/shims';
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -82,6 +81,10 @@ class Robot {
     return sensor.reflectedLight() * errK;
   }
 
+  pause(until: ()=>boolean){
+    while(!until()){};
+  }
+
   readTacho(side: Side): number {
     let motor =
       side == Side.Right
@@ -118,9 +121,7 @@ class Robot {
     stop: boolean = true
   ) {
     this.runMotor(side, speed);
-    pauseUntil(() => {
-      return until();
-    });
+    this.pause(until);
     if (stop) this.stopMotor(side);
   }
 
@@ -132,15 +133,18 @@ class Robot {
   ) {
     this.runMotor(Side.Left, speedLeft);
     this.runMotor(Side.Right, speedRight);
-    pauseUntil(() => {
-      return until();
-    });
+    this.pause(until);
     if (stop) this.stopMotor(Side.Left);
     if (stop) this.stopMotor(Side.Right);
   }
 
-  moveAhead(until: () => boolean = () => false,stop: boolean){
-    this.moveWheels(this.settings.electronic.speed,this.settings.electronic.speed,until,stop)
+  moveAhead(until: () => boolean = () => false, stop: boolean) {
+    this.moveWheels(
+      this.settings.electronic.speed,
+      this.settings.electronic.speed,
+      until,
+      stop
+    );
   }
 
   untilTime(time: number): () => boolean {
@@ -150,17 +154,17 @@ class Robot {
     };
   }
 
-  untilBlack(side: Side){
-    return ()=>{
-      return this.readDataFromSensor(side) < this.settings.line.black
-    }
+  untilBlack(side: Side) {
+    return () => {
+      return this.readDataFromSensor(side) < this.settings.line.black;
+    };
   }
 
   untilCm(side: Side, cm: number): () => boolean {
-    let k = this.settings.construction.wheelDiameter * Math.PI 
-    let startPos = this.readTacho(side)
+    let k = this.settings.construction.wheelDiameter * Math.PI;
+    let startPos = this.readTacho(side);
     return () => {
-      return this.readTacho(side) - startPos > (cm / k) * 360  ;
+      return this.readTacho(side) - startPos > (cm / k) * 360;
     };
   }
 }
