@@ -58,6 +58,17 @@ class Robot {
   settings: RobotSettings;
   constructor(settings: RobotSettings) {
     this.settings = settings;
+    let lM = this.settings.electronic.leftMotor;
+    lM.stop();
+    lM.reset();
+    lM.setPauseOnRun(false);
+    let rM = this.settings.electronic.leftMotor;
+    rM.stop();
+    rM.reset();
+    rM.setPauseOnRun(false);
+
+    this.readDataFromSensor(Side.Left);
+    this.readDataFromSensor(Side.Right);
   }
 
   readDataFromSensor(side: Side): number {
@@ -122,5 +133,11 @@ class Robot {
     return () => {
       return control.millis() - startTime > time;
     };
+  }
+
+  untilBlack(side: Side){
+    return ()=>{
+      return this.readDataFromSensor(side) < this.settings.line.black
+    }
   }
 }
