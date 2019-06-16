@@ -128,6 +128,10 @@ class Robot {
     if (stop) this.stopMotor(Side.Right);
   }
 
+  moveAhead(until: () => boolean = () => false,stop: boolean){
+    this.moveWheels(this.settings.electronic.speed,this.settings.electronic.speed,until,stop)
+  }
+
   untilTime(time: number): () => boolean {
     let startTime = control.millis();
     return () => {
