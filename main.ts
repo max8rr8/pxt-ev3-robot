@@ -76,6 +76,10 @@ class Robot {
     this.readDataFromSensor(Side.Right);
   }
 
+  pause(until: () => boolean) {
+    while (!until()) {}
+  }
+
   getSensor(side: Side): sensors.ColorSensor {
     if (side == Side.Left) return this.settings.electronic.leftSensor;
     if (side == Side.Right) return this.settings.electronic.rightSensor;
@@ -104,10 +108,6 @@ class Robot {
     return this.getSensor(side).reflectedLight() * this.getSensorK(side);
   }
 
-  pause(until: () => boolean) {
-    while (!until()) {}
-  }
-
   readTacho(side: Side): number {
     return this.getMotor(side).angle() / this.getMotorK(side);
   }
@@ -132,8 +132,8 @@ class Robot {
   }
 
   moveWheels(
-    speedRight: number,
     speedLeft: number,
+    speedRight: number,
     until: () => boolean = () => false,
     stop: boolean = true
   ) {
@@ -144,7 +144,7 @@ class Robot {
     if (stop) this.stopMotor(Side.Right);
   }
 
-  moveAhead(until: () => boolean = () => false, stop: boolean) {
+  moveAhead(until: () => boolean = () => false, stop: boolean = true) {
     this.moveWheels(
       this.settings.electronic.speed,
       this.settings.electronic.speed,
@@ -159,7 +159,6 @@ class Robot {
       return control.millis() - startTime > time;
     };
   }
-
   untilBlack(side: Side) {
     return () => {
       return this.readDataFromSensor(side) < this.settings.line.black;
