@@ -8,15 +8,17 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-  // import '../core/output';
-  // import '../color-sensor/color';
-  // import '../base/shims';
+// import '../core/output';
+// import '../color-sensor/color';
+// import '../base/shims';
 
 interface electronicSettings {
   rightMotor: motors.Motor;
   leftMotor: motors.Motor;
   rightSensor: sensors.ColorSensor;
   leftSensor: sensors.ColorSensor;
+  alfaSensor?: sensors.ColorSensor;
+  betaSensor?: sensors.ColorSensor;
   speed: number;
 }
 
@@ -31,6 +33,8 @@ interface errorSettings {
   kLeftWheel: number;
   kRightSensor: number;
   kLeftSensor: number;
+  kAlfaSensor?: number;
+  kBetaSensor?: number;
 }
 
 interface lineSettings {
@@ -50,7 +54,9 @@ interface RobotSettings {
 
 enum Side {
   Left,
-  Right
+  Right,
+  Alfa,
+  Beta
 }
 
 class Robot {
@@ -70,48 +76,48 @@ class Robot {
     this.readDataFromSensor(Side.Right);
   }
 
-  readDataFromSensor(side: Side): number {
-    let sensor =
-      side == Side.Right
-        ? this.settings.electronic.rightSensor
-        : this.settings.electronic.leftSensor;
-
-    let errK =
-      side == Side.Right ? this.settings.error.kRightSensor : this.settings.error.kLeftSensor;
-    return sensor.reflectedLight() * errK;
+  getSensor(side: Side): sensors.ColorSensor {
+    if (side == Side.Left) return this.settings.electronic.leftSensor;
+    if (side == Side.Right) return this.settings.electronic.rightSensor;
+    if (side == Side.Alfa) return this.settings.electronic.alfaSensor;
+    if (side == Side.Beta) return this.settings.electronic.betaSensor;
   }
 
-  pause(until: ()=>boolean){
-    while(!until()){};
+  getSensorK(side: Side): number {
+    if (side == Side.Left) return this.settings.error.kLeftSensor;
+    if (side == Side.Right) return this.settings.error.kRightSensor;
+    if (side == Side.Alfa) return this.settings.error.kAlfaSensor;
+    if (side == Side.Beta) return this.settings.error.kBetaSensor;
+  }
+
+  getMotor(side: Side): motors.Motor {
+    if (side == Side.Left) return this.settings.electronic.leftMotor;
+    if (side == Side.Right) return this.settings.electronic.rightMotor;
+  }
+
+  getMotorK(side: Side): number {
+    if (side == Side.Left) return this.settings.error.kLeftWheel;
+    if (side == Side.Right) return this.settings.error.kRightWheel;
+  }
+
+  readDataFromSensor(side: Side): number {
+    return this.getSensor(side).reflectedLight() * this.getSensorK(side);
+  }
+
+  pause(until: () => boolean) {
+    while (!until()) {}
   }
 
   readTacho(side: Side): number {
-    let motor =
-      side == Side.Right
-        ? this.settings.electronic.rightMotor
-        : this.settings.electronic.leftMotor;
-
-    let errK =
-      side == Side.Right ? this.settings.error.kRightWheel : this.settings.error.kLeftWheel;
-    return motor.angle() / errK;
+    return this.getMotor(side).angle() / this.getMotorK(side);
   }
 
   runMotor(side: Side, speed: number) {
-    let motor =
-      side == Side.Right
-        ? this.settings.electronic.rightMotor
-        : this.settings.electronic.leftMotor;
-    let errK =
-      side == Side.Right ? this.settings.error.kRightWheel : this.settings.error.kLeftWheel;
-    motor.run(speed * errK);
+    this.getMotor(side).run(speed * this.getMotorK(side));
   }
 
   stopMotor(side: Side) {
-    let motor =
-      side == Side.Right
-        ? this.settings.electronic.rightMotor
-        : this.settings.electronic.leftMotor;
-    motor.stop();
+    this.getMotor(side).stop();
   }
 
   moveWheel(
@@ -175,4 +181,3 @@ class Robot {
     };
   }
 }
- 
