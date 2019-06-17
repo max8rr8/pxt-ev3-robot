@@ -67,10 +67,12 @@ class Robot {
     lM.stop();
     lM.reset();
     lM.setPauseOnRun(false);
+    lM.setBrake(true)
     let rM = this.settings.electronic.leftMotor;
     rM.stop();
     rM.reset();
     rM.setPauseOnRun(false);
+    rM.setBrake(true)
 
     this.readDataFromSensor(Side.Left);
     this.readDataFromSensor(Side.Right);
