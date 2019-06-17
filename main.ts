@@ -87,6 +87,7 @@ class Robot {
     if (side == Side.Right) return this.settings.electronic.rightSensor;
     if (side == Side.Alfa) return this.settings.electronic.alfaSensor;
     if (side == Side.Beta) return this.settings.electronic.betaSensor;
+    return sensors.color3
   }
 
   getSensorK(side: Side): number {
@@ -94,16 +95,19 @@ class Robot {
     if (side == Side.Right) return this.settings.error.kRightSensor;
     if (side == Side.Alfa) return this.settings.error.kAlfaSensor;
     if (side == Side.Beta) return this.settings.error.kBetaSensor;
+    return 1
   }
 
   getMotor(side: Side): motors.Motor {
     if (side == Side.Left) return this.settings.electronic.leftMotor;
     if (side == Side.Right) return this.settings.electronic.rightMotor;
+    return motors.largeA
   }
 
   getMotorK(side: Side): number {
     if (side == Side.Left) return this.settings.error.kLeftWheel;
     if (side == Side.Right) return this.settings.error.kRightWheel;
+    return 1
   }
 
   readDataFromSensor(side: Side): number {
