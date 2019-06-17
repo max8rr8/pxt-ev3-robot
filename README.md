@@ -74,7 +74,7 @@ Method untilDegrees uses to wait until wheel get rotated to x degrees
 
 ```ts
 // Pause until left wheel wil be rotated to 180 degrees
-robot.pause(robot.untilDegrees(Side.Left, 100));
+robot.pause(robot.untilDegrees(Side.Left, 180));
 ```
 
 ## Getting sensors, motors and their data
@@ -94,7 +94,7 @@ You can get sensor and it errorK (k\_\_\_\_Sensor) using methods getSensor and g
 // Getting alfa sensor
 robot.getSensor(Side.Alfa);
 // End kBetaSensor
-robot.getMotorK(Side.Beta);
+robot.getSensorK(Side.Beta);
 ```
 
 You can read degrees from motor
@@ -127,10 +127,10 @@ But more efficent way use moveWheel
 
 ```ts
 //Turn on motor and dont stop it until left sensor see black line
-robot.moveWheel(Side.Left, 50, robot.untilBlack());
+robot.moveWheel(Side.Left, 50, robot.untilBlack(Side.Left));
 
 //You can also give last parameter when you not want to stop motor
-robot.moveWheel(Side.Left, 50, robot.untilBlack(), false);
+robot.moveWheel(Side.Left, 50, robot.untilBlack(Side.Left), false);
 
 //Exaple rotation for
 robot.moveWheel(Side.Left, 50, robot.untilDegrees(Side.Left, 100), false); // 100 degress
@@ -151,5 +151,5 @@ Move Ahead is used to MOVE AHEAD. It uses speed specified in parameters of robot
 // Move ahead until 10 cm
 robot.moveAhead(robot.untilCm(Side.Left, 10))
 //You can also specify if you want to stop motors
-robot.moveAhead(robot.untilBlack(Side.left), false)
+robot.moveAhead(robot.untilBlack(Side.Left), false)
 ```
