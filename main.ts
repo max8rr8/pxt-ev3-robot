@@ -66,16 +66,16 @@ class PID {
   constructor(kP: number, kI: number, kD: number) {
     this.summErr = 0;
     this.lastErr = 0;
-    this.k = [kP, kI, kD]
+    this.k = [kP, kI, kD];
   }
 
-  update(err: number): number{
-    let pErr = err * this.k[0]
+  update(err: number): number {
+    let pErr = err * this.k[0];
 
-    this.summErr += err
-    let iErr = this.summErr * this.k[1]
+    this.summErr += err;
+    let iErr = this.summErr * this.k[1];
 
-    let dErr = this.lastErr * this.k[2]
+    let dErr = this.lastErr * this.k[2];
 
     return pErr + iErr + dErr;
   }
@@ -179,6 +179,23 @@ class Robot {
       until,
       stop
     );
+  }
+
+  moveLine(until: () => boolean = () => false, stop: boolean = true) {
+    let regulator = new PID(
+      this.settings.line.kP,
+      this.settings.line.kI,
+      this.settings.line.kD
+    );
+    let robot = this;
+    let speed = robot.settings.electronic.speed
+    this.pause(function() {
+      let err = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
+      let res = regulator.update(err);
+      robot.runMotor(Side.Left, speed + res)
+      robot.runMotor(Side.Right, speed - res)
+      return until();
+    });
   }
 
   untilTime(time: number): () => boolean {
