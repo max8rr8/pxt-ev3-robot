@@ -190,7 +190,7 @@ class Robot {
     let robot = this;
     let speed = robot.settings.electronic.speed
     this.pause(function() {
-      let err = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
+      let err: number = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
       let res = regulator.update(err);
       robot.runMotor(Side.Left, speed + res)
       robot.runMotor(Side.Right, speed - res)
