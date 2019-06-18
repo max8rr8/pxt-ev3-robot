@@ -8,9 +8,9 @@
 // - M - - - - - A A A X X X - -
 // - - - - - - - - - - - - - - -
 
-// import '../core/output';
-// import '../color-sensor/color';
-// import '../base/shims';
+import '../core/output';
+import '../color-sensor/color';
+import '../base/shims';
 
 interface electronicSettings {
   rightMotor: motors.Motor;
@@ -59,6 +59,28 @@ enum Side {
   Beta
 }
 
+class PID {
+  summErr: number;
+  lastErr: number;
+  k: number[];
+  constructor(kP: number, kI: number, kD: number) {
+    this.summErr = 0;
+    this.lastErr = 0;
+    this.k = [kP, kI, kD]
+  }
+
+  update(err: number): number{
+    let pErr = err * this.k[0]
+
+    this.summErr += err
+    let iErr = this.summErr * this.k[1]
+
+    let dErr = this.lastErr * this.k[2]
+
+    return pErr + iErr + dErr;
+  }
+}
+
 class Robot {
   settings: RobotSettings;
   constructor(settings: RobotSettings) {
@@ -67,12 +89,12 @@ class Robot {
     lM.stop();
     lM.reset();
     lM.setPauseOnRun(false);
-    lM.setBrake(true)
+    lM.setBrake(true);
     let rM = this.settings.electronic.leftMotor;
     rM.stop();
     rM.reset();
     rM.setPauseOnRun(false);
-    rM.setBrake(true)
+    rM.setBrake(true);
 
     this.readDataFromSensor(Side.Left);
     this.readDataFromSensor(Side.Right);
@@ -87,7 +109,7 @@ class Robot {
     if (side == Side.Right) return this.settings.electronic.rightSensor;
     if (side == Side.Alfa) return this.settings.electronic.alfaSensor;
     if (side == Side.Beta) return this.settings.electronic.betaSensor;
-    return sensors.color3
+    return sensors.color3;
   }
 
   getSensorK(side: Side): number {
@@ -95,19 +117,19 @@ class Robot {
     if (side == Side.Right) return this.settings.error.kRightSensor;
     if (side == Side.Alfa) return this.settings.error.kAlfaSensor;
     if (side == Side.Beta) return this.settings.error.kBetaSensor;
-    return 1
+    return 1;
   }
 
   getMotor(side: Side): motors.Motor {
     if (side == Side.Left) return this.settings.electronic.leftMotor;
     if (side == Side.Right) return this.settings.electronic.rightMotor;
-    return motors.largeA
+    return motors.largeA;
   }
 
   getMotorK(side: Side): number {
     if (side == Side.Left) return this.settings.error.kLeftWheel;
     if (side == Side.Right) return this.settings.error.kRightWheel;
-    return 1
+    return 1;
   }
 
   readDataFromSensor(side: Side): number {
