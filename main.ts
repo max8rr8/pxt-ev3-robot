@@ -151,7 +151,7 @@ class Robot {
   moveWheel(
     side: Side,
     speed: number,
-    until: () => boolean = () => false,
+    until: () => boolean,
     stop: boolean = true
   ) {
     this.runMotor(side, speed);
@@ -162,7 +162,7 @@ class Robot {
   moveWheels(
     speedLeft: number,
     speedRight: number,
-    until: () => boolean = () => false,
+    until: () => boolean,
     stop: boolean = true
   ) {
     this.runMotor(Side.Left, speedLeft);
@@ -172,7 +172,7 @@ class Robot {
     if (stop) this.stopMotor(Side.Right);
   }
 
-  moveAhead(until: () => boolean = () => false, stop: boolean = true) {
+  moveAhead(until: () => boolean, stop: boolean = true) {
     this.moveWheels(
       this.settings.electronic.speed,
       this.settings.electronic.speed,
@@ -181,7 +181,7 @@ class Robot {
     );
   }
 
-  moveLine(until: () => boolean = () => false, stop: boolean = true) {
+  moveLine(until: () => boolean, stop: boolean = true) {
     let regulator = new PID(
       this.settings.line.kP,
       this.settings.line.kI,
