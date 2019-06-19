@@ -187,13 +187,12 @@ class Robot {
       this.settings.line.kI,
       this.settings.line.kD
     );
-    let robot = this;
-    let speed = robot.settings.electronic.speed
-    this.pause(function() {
-      let err: number = (<number>this.readDataFromSensor(Side.Left)) - (<number>this.readDataFromSensor(Side.Right));
+    let speed = this.settings.electronic.speed
+    this.pause(() => {
+      let err: number = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
       let res = regulator.update(err);
-      robot.runMotor(Side.Left, speed + res)
-      robot.runMotor(Side.Right, speed - res)
+      this.runMotor(Side.Left, speed + res)
+      this.runMotor(Side.Right, speed - res)
       return until();
     });
   }
