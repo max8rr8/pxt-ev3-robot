@@ -101,7 +101,7 @@ class Robot {
   }
 
   pause(until: () => boolean) {
-    while (!until()) {}
+    pauseUntil(!until())
   }
 
   getSensor(side: Side): sensors.ColorSensor {
