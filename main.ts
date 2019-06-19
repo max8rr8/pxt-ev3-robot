@@ -132,6 +132,12 @@ class Robot {
     return 1;
   }
 
+  getSideK(side: Side){
+    if(side == Side.Left) return 1
+    if(side == Side.Right) return -1
+    return 0;
+  }
+
   readDataFromSensor(side: Side): number {
     return this.getSensor(side).reflectedLight() * this.getSensorK(side);
   }
@@ -190,6 +196,24 @@ class Robot {
     let speed = this.settings.electronic.speed
     this.pause(() => {
       let err: number = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
+      let res = regulator.update(err);
+      this.runMotor(Side.Left, speed + res)
+      this.runMotor(Side.Right, speed - res)
+      return until();
+    });
+  }
+
+  moveLineOne(sensor: Side, side:Side, until: () => boolean, stop: boolean = true) {
+    let regulator = new PID(
+      this.settings.line.kP,
+      this.settings.line.kI,
+      this.settings.line.kD
+    );
+    let speed = this.settings.electronic.speed
+    let line = this.settings.line.black + this.settings.line.white;
+    line *= 0.5
+    this.pause(() => {
+      let err: number = this.getSideK(side) * (this.readDataFromSensor(sensor) - line);
       let res = regulator.update(err);
       this.runMotor(Side.Left, speed + res)
       this.runMotor(Side.Right, speed - res)
