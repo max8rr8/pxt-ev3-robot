@@ -75,7 +75,7 @@ class PID {
     this.summErr += err;
     let iErr = this.summErr * this.k[1];
 
-    let dErr = this.lastErr * this.k[2];
+    let dErr = (err - this.lastErr) * this.k[2];
 
     return pErr + iErr + dErr;
   }
