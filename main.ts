@@ -100,8 +100,13 @@ class Robot {
     this.readDataFromSensor(Side.Right);
   }
 
+  setRegulation(stat: boolean) {
+    this.settings.electronic.rightMotor.setRegulated(stat);
+    this.settings.electronic.leftMotor.setRegulated(stat);
+  }
+
   pause(until: () => boolean) {
-    pauseUntil(until)
+    pauseUntil(until);
   }
 
   getSensor(side: Side): sensors.ColorSensor {
@@ -132,9 +137,9 @@ class Robot {
     return 1;
   }
 
-  getSideK(side: Side){
-    if(side == Side.Left) return 1
-    if(side == Side.Right) return -1
+  getSideK(side: Side) {
+    if (side == Side.Left) return 1;
+    if (side == Side.Right) return -1;
     return 0;
   }
 
@@ -154,12 +159,7 @@ class Robot {
     this.getMotor(side).stop();
   }
 
-  moveWheel(
-    side: Side,
-    speed: number,
-    until: () => boolean,
-    stop: boolean = true
-  ) {
+  moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
     this.runMotor(side, speed);
     this.pause(until);
     if (stop) this.stopMotor(side);
@@ -179,6 +179,7 @@ class Robot {
   }
 
   moveAhead(until: () => boolean, stop: boolean = true) {
+    this.setRegulation(true);
     this.moveWheels(
       this.settings.electronic.speed,
       this.settings.electronic.speed,
@@ -188,35 +189,37 @@ class Robot {
   }
 
   moveLine(until: () => boolean, stop: boolean = true) {
+    this.setRegulation(false);
     let regulator = new PID(
       this.settings.line.kP,
       this.settings.line.kI,
       this.settings.line.kD
     );
-    let speed = this.settings.electronic.speed
+    let speed = this.settings.electronic.speed;
     this.pause(() => {
-      let err: number = this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
+      let err: number =
+        this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
       let res = regulator.update(err);
-      this.runMotor(Side.Left, speed + res)
-      this.runMotor(Side.Right, speed - res)
+      this.runMotor(Side.Left, speed + res);
+      this.runMotor(Side.Right, speed - res);
       return until();
     });
   }
 
-  moveLineOne(sensor: Side, side:Side, until: () => boolean, stop: boolean = true) {
+  moveLineOne(sensor: Side, side: Side, until: () => boolean, stop: boolean = true) {
     let regulator = new PID(
       this.settings.line.kP,
       this.settings.line.kI,
       this.settings.line.kD
     );
-    let speed = this.settings.electronic.speed
+    let speed = this.settings.electronic.speed;
     let line = this.settings.line.black + this.settings.line.white;
-    line *= 0.5
+    line *= 0.5;
     this.pause(() => {
       let err: number = this.getSideK(side) * (this.readDataFromSensor(sensor) - line);
       let res = regulator.update(err);
-      this.runMotor(Side.Left, speed + res)
-      this.runMotor(Side.Right, speed - res)
+      this.runMotor(Side.Left, speed + res);
+      this.runMotor(Side.Right, speed - res);
       return until();
     });
   }
