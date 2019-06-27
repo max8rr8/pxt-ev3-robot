@@ -150,7 +150,7 @@ class Robot {
       (this.settings.construction.distanceBeetwenWheels / 2) * j[0],
       (this.settings.construction.distanceBeetwenWheels / 2) * j[1]
     ];
-    let l =  degrees / this.settings.construction.wheelDiameter;
+    let l =  2 * degrees / this.settings.construction.wheelDiameter;
     return [j[0] * k, j[1] * k, d[0] * l, d[1] * l].map(e=>e*rotateK);
   }
 
