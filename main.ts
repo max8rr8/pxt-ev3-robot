@@ -143,6 +143,17 @@ class Robot {
     return 0;
   }
 
+  calcRotateData(degrees: number, pointRotate: number, rotateK: number) {
+    let j = [-1 - pointRotate, 1 - pointRotate];
+    let k = this.settings.electronic.speed / Math.max(Math.abs(j[0]), Math.abs(j[1]));
+    let d = [
+      (this.settings.construction.distanceBeetwenWheels / 2) * j[0],
+      (this.settings.construction.distanceBeetwenWheels / 2) * j[1]
+    ];
+    let l =  degrees / this.settings.construction.wheelDiameter;
+    return [j[0] * k, j[1] * k, d[0] * l, d[1] * l].map(e=>e*rotateK);
+  }
+
   readDataFromSensor(side: Side): number {
     return this.getSensor(side).reflectedLight() * this.getSensorK(side);
   }
@@ -207,6 +218,7 @@ class Robot {
   }
 
   moveLineOne(sensor: Side, side: Side, until: () => boolean, stop: boolean = true) {
+    this.setRegulation(false);
     let regulator = new PID(
       this.settings.line.kP,
       this.settings.line.kI,
@@ -222,6 +234,22 @@ class Robot {
       this.runMotor(Side.Right, speed - res);
       return until();
     });
+  }
+
+  rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
+    this.setRegulation(true)
+    let k = 0;
+    if(rotateSide == Side.Left)return 1;
+    if(rotateSide == Side.Right)return -1;
+    let data = this.calcRotateData(degrees, pointRotate, k)
+    let untilData = []
+    if(Math.abs(data[0]) > Math.abs(data[1]))untilData=[Side.Left, data[2]]
+    if(Math.abs(data[1]) > Math.abs(data[0]))untilData=[Side.Right, data[3]]
+    this.moveWheels(
+      data[0],
+      data[1],
+      this.untilDegrees(untilData[0], untilData[1])
+    )
   }
 
   untilTime(time: number): () => boolean {
