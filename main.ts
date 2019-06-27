@@ -240,7 +240,7 @@ class Robot {
     this.setRegulation(true)
     let k = this.getSideK(rotateSide);
     let data = this.calcRotateData(degrees, pointRotate, k)
-    let untilData; number[] = []
+    let untilData: number[] = []
     if(Math.abs(data[0]) > Math.abs(data[1]))untilData=[Side.Left, data[2]]
     if(Math.abs(data[1]) > Math.abs(data[0]))untilData=[Side.Right, data[3]]
     this.moveWheels(
