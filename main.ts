@@ -273,7 +273,7 @@ class Robot {
   untilDegrees(side: Side, dgr: number): () => boolean {
     let startPos = this.readTacho(side);
     return () => {
-      return this.readTacho(side) - startPos > dgr;
+      return Math.abs(this.readTacho(side) - startPos) > Math.abs(dgr);
     };
   }
 }
