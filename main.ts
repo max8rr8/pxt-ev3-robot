@@ -150,8 +150,8 @@ class Robot {
       (this.settings.construction.distanceBeetwenWheels / 2) * j[0],
       (this.settings.construction.distanceBeetwenWheels / 2) * j[1]
     ];
-    let l =  2 * degrees / this.settings.construction.wheelDiameter;
-    return [j[0] * k, j[1] * k, d[0] * l, d[1] * l].map(e=>e*rotateK);
+    let l = (2 * degrees) / this.settings.construction.wheelDiameter;
+    return [j[0] * k, j[1] * k, d[0] * l, d[1] * l].map(e => e * rotateK);
   }
 
   readDataFromSensor(side: Side): number {
@@ -170,6 +170,11 @@ class Robot {
     this.getMotor(side).stop();
   }
 
+  stopWheels() {
+    control.runInBackground(() => this.getMotor(Side.Left).stop());
+    control.runInBackground(() => this.getMotor(Side.Right).stop());
+  }
+
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
     this.runMotor(side, speed);
     this.pause(until);
@@ -185,8 +190,7 @@ class Robot {
     this.runMotor(Side.Left, speedLeft);
     this.runMotor(Side.Right, speedRight);
     this.pause(until);
-    if (stop) this.stopMotor(Side.Left);
-    if (stop) this.stopMotor(Side.Right);
+    if (stop) this.stopWheels();
   }
 
   moveAhead(until: () => boolean, stop: boolean = true) {
@@ -215,6 +219,7 @@ class Robot {
       this.runMotor(Side.Right, speed - res);
       return until();
     });
+    if (stop) this.stopWheels();
   }
 
   moveLineOne(sensor: Side, side: Side, until: () => boolean, stop: boolean = true) {
@@ -234,20 +239,17 @@ class Robot {
       this.runMotor(Side.Right, speed - res);
       return until();
     });
+    if (stop) this.stopWheels();
   }
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
-    this.setRegulation(true)
+    this.setRegulation(true);
     let k = this.getSideK(rotateSide);
-    let data = this.calcRotateData(degrees, pointRotate, k)
-    let untilData: number[] = []
-    if(Math.abs(data[0]) > Math.abs(data[1]))untilData=[Side.Left, data[2]]
-    if(Math.abs(data[1]) > Math.abs(data[0]))untilData=[Side.Right, data[3]]
-    this.moveWheels(
-      data[0],
-      data[1],
-      this.untilDegrees(untilData[0], untilData[1])
-    )
+    let data = this.calcRotateData(degrees, pointRotate, k);
+    let untilData: number[] = [];
+    if (Math.abs(data[0]) > Math.abs(data[1])) untilData = [Side.Left, data[2]];
+    if (Math.abs(data[1]) > Math.abs(data[0])) untilData = [Side.Right, data[3]];
+    this.moveWheels(data[0], data[1], this.untilDegrees(untilData[0], untilData[1]));
   }
 
   untilTime(time: number): () => boolean {
