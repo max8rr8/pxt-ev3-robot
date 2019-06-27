@@ -238,11 +238,9 @@ class Robot {
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
     this.setRegulation(true)
-    let k = 0;
-    if(rotateSide == Side.Left)return 1;
-    if(rotateSide == Side.Right)return -1;
+    let k = this.getSideK(rotateSide);
     let data = this.calcRotateData(degrees, pointRotate, k)
-    let untilData = []
+    let untilData; number[] = []
     if(Math.abs(data[0]) > Math.abs(data[1]))untilData=[Side.Left, data[2]]
     if(Math.abs(data[1]) > Math.abs(data[0]))untilData=[Side.Right, data[3]]
     this.moveWheels(
