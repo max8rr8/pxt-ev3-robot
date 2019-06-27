@@ -20,6 +20,7 @@ let robot = new Robot({
     speed: 50 //Standart speed of robot
   },
   error: {
+    tachoError: 10, // Error of your tacho sensor on motors
     kLeftSensor: 1, // k of left sensor, data from left sensor calculates using leftSensor.reflectedLight() * kLeftSensor
     kRightSensor: 1, // k of right sensor, same as kLeftSensor but for right
     kAlfaSensor: 1, //Use only when use alfaSensor
