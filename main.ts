@@ -268,13 +268,14 @@ class Robot {
   untilDegrees(side: Side, dgr: number): () => boolean {
     let startPos = this.readTacho(side);
     return () => {
-      return Math.abs(this.readTacho(side) - startPos) > Math.abs(dgr) - this.settings.error.tachoErr;
+      return (
+        Math.abs(this.readTacho(side) - startPos) > Math.abs(dgr) - this.settings.error.tachoErr
+      );
     };
   }
 
   untilCm(side: Side, cm: number): () => boolean {
     let k = this.settings.construction.wheelDiameter * Math.PI;
-    return this.untilDegrees(side, cm / k * 360)
+    return this.untilDegrees(side, (cm / k) * 360);
   }
-
 }
