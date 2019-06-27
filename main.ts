@@ -29,7 +29,7 @@ interface constructionSettings {
 }
 
 interface errorSettings {
-  tachoError: number;
+  tachoErr: number;
   kRightWheel: number;
   kLeftWheel: number;
   kRightSensor: number;
