@@ -97,6 +97,8 @@ class Robot {
     rM.setPauseOnRun(false);
     rM.setBrake(true);
 
+    this.getSensor(Side.Left).reset()
+    this.getSensor(Side.Right).reset()
     this.readDataFromSensor(Side.Left);
     this.readDataFromSensor(Side.Right);
   }
