@@ -71,6 +71,82 @@ enum ManipulatorDirection {
   inverted = -1
 }
 
+class Loger {
+  logList: string[]
+  logLevel: number
+  pos: number
+  storage: storage.Storage
+
+  constructor(logLevel: number = 4) {
+      this.logLevel = logLevel
+      this.pos = 0
+      this.logList = [
+          'Robot----------------',
+          '-------- pxt     ----',
+          '-M------ pxt-ev3 ----',
+          '--M----- ts(js)  ----',
+          '---M---- lego    ----',
+          '----M--- MS      ----',
+          '---M-----------------',
+          '--M------------------',
+          '-M-----AAAXXX--------',
+          '---------------------',
+      ]
+      this.storage = new storage.Storage()
+      this.storage.remove("/home/root/lms2012/prjs/log.txt")
+      this.logList.forEach((e) => {
+          this.logToFile(e)
+      })
+      brick.buttonUp.onEvent(ButtonEvent.Pressed, () => {
+          this.pos -= 4
+          this.display()
+      })
+
+      brick.buttonDown.onEvent(ButtonEvent.Pressed, () => {
+          this.pos += 4
+          this.display()
+      })
+  }
+
+  logToFile(text: string) {
+      this.storage.appendLine("/home/root/lms2012/prjs/log.txt", text)
+      this.storage.limit("/home/root/lms2012/prjs/log.txt", 65536)
+
+  }
+
+  log(text: string, level: number = 4) {
+      if (this.logLevel > level) return;
+      console.log(text)
+      if (this.logList.length >= 12) this.pos++;
+      this.logList.push('[' + (control.millis() / 1000).toString().substr(0, 5) + '] ' + text)
+      this.logToFile('[' + (control.millis() / 1000).toString() + '] ' + text)
+      this.display()
+
+  }
+
+  display() {
+
+      brick.clearScreen()
+      for (let i = 0; i < 13; i++) {
+          if (!this.logList[i + this.pos]) continue;
+          brick.showString(this.logList[i + this.pos], i + 1)
+
+      }
+  }
+
+  wait(condition: () => boolean, text: string) {
+      let id = this.logList.length
+      let els = ['|', '/', '-', '\\'].map(e => text + ' ' + e)
+      pauseUntil(() => {
+          this.logList[id] = els[Math.floor(control.millis() / 400 % 4)]
+          this.display()
+          return condition()
+      })
+      this.logList.pop()
+      this.display()
+  }
+}
+
 class PID {
   summErr: number;
   lastErr: number;

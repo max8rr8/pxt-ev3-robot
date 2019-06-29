@@ -4,7 +4,8 @@
   "description": "Creating powerfull robots ",
   "license": "MIT",
   "dependencies": {
-      "ev3": "*"
+      "ev3": "*",
+      "storage": "github:maximmasterr/pxt-ev3-storage#0134aa24356cb93fa74ef3940743378d7f7f1e30"
   },
   "files": [
       "README.md",
