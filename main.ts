@@ -53,6 +53,12 @@ interface RobotSettings {
   line: lineSettings;
 }
 
+interface ScannerSettings {
+  samplesFilter: number;
+  scan: () => number;
+  onDetected: (data: number) => void;
+}
+
 enum Side {
   Left,
   Right,
@@ -118,6 +124,52 @@ class Manipulator {
     let k = this.motor.angle() - dgr > 0 ? 1 : -1;
     this.motor.run(this.speed * k, Math.abs(this.motor.angle() - dgr), MoveUnit.Degrees);
     if (pause) this.motor.pauseUntilReady();
+  }
+}
+
+class Scanner {
+  settings: ScannerSettings;
+  isRunning: boolean;
+  lastData: number;
+  lastSamples: number;
+  lastNorm: number;
+  constructor(settings: ScannerSettings) {
+    this.settings = settings;
+    this.isRunning = false;
+    this.lastData = -1;
+    this.lastNorm = -1;
+    this.lastSamples = 0;
+  }
+
+  update(data: number) {
+    if (data == this.lastData) {
+      this.lastSamples++;
+      if (this.lastNorm != data && this.lastSamples == this.settings.samplesFilter) {
+        this.settings.onDetected(data);
+        this.lastNorm = data;
+      }
+    } else {
+      this.lastSamples = 0;
+      this.lastData = data;
+    }
+  }
+
+  read() {
+    this.update(this.settings.scan());
+  }
+
+  start() {
+    this.isRunning = true;
+    control.runInParallel(() => {
+      while (this.isRunning) {
+        this.read();
+        pause(50);
+      }
+    });
+  }
+
+  stop() {
+    this.isRunning = false;
   }
 }
 
