@@ -60,6 +60,11 @@ enum Side {
   Beta
 }
 
+enum ManipulatorDirection {
+  normal = 1,
+  inverted = -1
+}
+
 class PID {
   summErr: number;
   lastErr: number;
@@ -79,6 +84,40 @@ class PID {
     let dErr = (err - this.lastErr) * this.k[2];
 
     return pErr + iErr + dErr;
+  }
+}
+
+class Manipulator {
+  motor: motors.Motor;
+  speed: number;
+
+  constructor(motor: motors.Motor, speed: number = 30) {
+    this.motor = motor;
+    this.speed = speed;
+    this.motor.setPauseOnRun(false);
+  }
+
+  toBreak(mode: ManipulatorDirection, realPause: boolean = true) {
+    this.motor.setRegulated(false);
+    this.motor.run(this.speed * mode);
+    pause(200);
+    let pauseUntilReady = () => {
+      pauseUntil(() => Math.abs(this.motor.speed()) < Math.abs(this.speed * 0.2));
+      this.motor.run(this.speed * 0.2 * mode);
+      if (mode == ManipulatorDirection.normal) this.motor.clearCounts();
+    };
+    if (realPause) pauseUntilReady();
+    else control.runInParallel(pauseUntilReady);
+  }
+
+  toPos(dgr: number, pause: boolean = true) {
+    this.motor.setRegulated(true);
+    this.motor.setBrake(true);
+    this.motor.stop();
+    if (this.motor.angle() == dgr) return;
+    let k = this.motor.angle() - dgr > 0 ? 1 : -1;
+    this.motor.run(this.speed * k, Math.abs(this.motor.angle() - dgr), MoveUnit.Degrees);
+    if (pause) this.motor.pauseUntilReady();
   }
 }
 
