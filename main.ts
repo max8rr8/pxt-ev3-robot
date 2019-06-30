@@ -131,6 +131,7 @@ class Logger {
   }
 
   wait(condition: () => boolean, text: string) {
+    this.pos++;
     let id = this.logList.length;
     let els = ['|', '/', '-', '\\'].map(e => text + ' ' + e);
     pauseUntil(() => {
@@ -139,6 +140,7 @@ class Logger {
       return condition();
     });
     this.logList.pop();
+    this.pos--;
     this.display();
   }
 }
@@ -288,7 +290,7 @@ class Robot {
   }
 
   point(name: string) {
-    this.logger.log('Reached point: ' + name, 10);
+    this.logger.log('@' + name, 10);
     control.runInParallel(function() {
       music.playTone(Note.A, 100);
       pause(100);
@@ -298,7 +300,7 @@ class Robot {
 
   breakPoint(num: number) {
     motors.stopAll();
-    this.log('Reached BREAKPOINT: ' + num.toString())
+    this.log('BREAKPOINT: ' + num.toString())
     music.playSoundEffectUntilDone(this.getSoundFromNumber(num))
     this.logger.wait(this.untilTime(3000), 'BREAKPOINT');
   }
