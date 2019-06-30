@@ -268,6 +268,21 @@ class Robot {
     // this.readDataFromSensor(Side.Right);
   }
 
+  getSoundFromNumber(num: number): Sound {
+    if (num == 1) return sounds.numbersOne;
+    if (num == 2) return sounds.numbersTwo;
+    if (num == 3) return sounds.numbersThree;
+    if (num == 4) return sounds.numbersFour;
+    if (num == 5) return sounds.numbersFive;
+    if (num == 6) return sounds.numbersSix;
+    if (num == 7) return sounds.numbersSeven;
+    if (num == 8) return sounds.numbersEight;
+    if (num == 9) return sounds.numbersNine;
+    if (num == 10) return sounds.numbersTen;
+
+    return sounds.numbersZero;
+  }
+
   log(text: string, level: number = 4) {
     this.logger.log(text, level);
   }
@@ -281,10 +296,11 @@ class Robot {
     });
   }
 
-  breakPoint(name: string){
-    motors.stopAll()
-    this.point(name)
-    this.logger.wait(this.untilTime(3000), 'BREAKPOINT')
+  breakPoint(num: number) {
+    motors.stopAll();
+    this.log('Reached BREAKPOINT: ' + num.toString())
+    music.playSoundEffectUntilDone(this.getSoundFromNumber(num))
+    this.logger.wait(this.untilTime(3000), 'BREAKPOINT');
   }
 
   setSpeed(speed: number) {
