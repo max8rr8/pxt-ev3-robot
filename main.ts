@@ -76,8 +76,10 @@ class Logger {
   logLevel: number;
   pos: number;
   storage: storage.Storage;
+  startTime: number;
 
   constructor(logLevel: number = 4) {
+    this.startTime = 0;
     this.logLevel = logLevel;
     this.pos = 0;
     this.logList = [
@@ -108,6 +110,10 @@ class Logger {
     });
   }
 
+  setTime(){
+    this.startTime = control.millis()
+  }
+
   logToFile(text: string) {
     this.storage.appendLine('/home/root/lms2012/prjs/log.txt', text);
     this.storage.limit('/home/root/lms2012/prjs/log.txt', 65536);
@@ -117,8 +123,9 @@ class Logger {
     if (this.logLevel > level) return;
     console.log(text);
     if (this.logList.length >= 12) this.pos++;
-    this.logList.push('[' + (control.millis() / 1000).toString().substr(0, 5) + '] ' + text);
-    this.logToFile('[' + (control.millis() / 1000).toString() + '] ' + text);
+    let time = (control.millis() - this.startTime) / 1000
+    this.logList.push('[' + time.toString().substr(0, 5) + '] ' + text);
+    this.logToFile('[' + time.toString() + '] ' + text);
     this.display();
   }
 
