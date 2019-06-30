@@ -488,7 +488,7 @@ class Robot {
   }
 
   untilDegrees(side: Side, dgr: number): () => boolean {
-    this.log('Until degrees')
+    this.log('Until degrees', 2)
     let startPos = this.readTacho(side);
     return () => {
       return (
@@ -498,7 +498,7 @@ class Robot {
   }
 
   untilCm(side: Side, cm: number): () => boolean {
-    this.log('Until cm')
+    this.log('Until cm', 2)
     let k = this.settings.construction.wheelDiameter * Math.PI;
     return this.untilDegrees(side, (cm / k) * 360);
   }
