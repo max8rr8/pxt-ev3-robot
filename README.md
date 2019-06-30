@@ -80,6 +80,9 @@ robot.pause(robot.untilDegrees(Side.Left, 180));
 
 ## Getting sensors, motors and their data
 
+There are methods to get motor and sensor and their k passed to robot parameters
+Use that way to work with sensors and motors, use `robot.getMotor(Side.Left)` instead `motors.mediumB`
+
 You can get motor and it errorK (k\_\_\_\_Wheel) using methods getMotor and getMotorK
 
 ```ts
@@ -114,6 +117,8 @@ robot.readDataFromSensor(Side.Left);
 
 ## Motors
 
+There are methods to control motors but that is not good way to control your robot
+
 You can simply turn on or stop your motor
 
 ```ts
@@ -139,18 +144,65 @@ robot.moveWheel(Side.Left, 50, robot.untilDegrees(Side.Left, 100), false); // 10
 robot.moveWheel(Side.Left, 50, robot.untilCm(Side.Left, 10), false); // 10 cm
 ```
 
-You can also move two motors 
+You can also move two motors
+
 ```ts
 //Moves two wheels with speed 50 left and  50 right until 10 seconds than dont stop it
-robot.moveWheels(50, 50, robot.untilTime(10000), false)
+robot.moveWheels(50, 50, robot.untilTime(10000), false);
 ```
 
-### There are more efficent ways to control movement
+## Robot movements
 
 Move Ahead is used to MOVE AHEAD. It uses speed specified in parameters of robot
+
 ```ts
 // Move ahead until 10 cm
-robot.moveAhead(robot.untilCm(Side.Left, 10))
+robot.moveAhead(robot.untilCm(Side.Left, 10));
 //You can also specify if you want to stop motors
-robot.moveAhead(robot.untilBlack(Side.Left), false)
+robot.moveAhead(robot.untilBlack(Side.Left), false);
 ```
+
+You can also move using two sensors and line
+
+```ts
+//Move line until black
+robot.moveLine(robot.untilBlack(Side.Left));
+//And also with dont stop motors
+robot.moveLine(robot.untilCm(Side.Left, 10), false);
+```
+
+There are also methods for move using one sensor
+But it is recomended to use two sensors instead one
+
+```ts
+//Move line until black using left sensor
+robot.moveLineOne(Side.Left, robot.untilBlack(Side.Left));
+//And also with dont stop motors using right sensor
+robot.moveLineOne(robot.untilCm(Side.Left, 10), false);
+```
+
+You can rotate robot using rotate method
+
+```ts
+//Rotate robot to left 90
+robot.rotate(Side.Left);
+
+//Rotate robot to right 45
+robot.rotate(Side.Right, 45);
+```
+
+There are third parameter point rotate
+It specifies point around which you want to turn
+```
+Examples
+- robot parts
++ point of rotate
+| whee;
+
+  Point: 0       Point: -1      Point: 1
+|-----+-----|  +-----------|  |----------+|
+
+  Point: 0.5    Point 2
+|-------+---|  |-----------|           +
+```
+
