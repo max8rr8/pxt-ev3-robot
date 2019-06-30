@@ -260,6 +260,7 @@ class Robot {
   constructor(settings: RobotSettings) {
     this.settings = settings;
     this.logger = new Logger();
+    this.logger.display()
     let lM = this.settings.electronic.leftMotor;
     lM.stop();
     lM.reset();
@@ -275,6 +276,13 @@ class Robot {
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
     // this.readDataFromSensor(Side.Right);
+  }
+
+  startCycle(){
+    this.logger.wait(()=>brick.buttonEnter.wasPressed(), 'Press enter')
+    pause(100)
+    this.logger.setTime()
+    this.point('START')
   }
 
   getSoundFromNumber(num: number): Sound {
