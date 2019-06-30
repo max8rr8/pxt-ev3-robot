@@ -305,6 +305,10 @@ class Robot {
     this.logger.wait(this.untilTime(3000), 'BREAKPOINT');
   }
 
+  setDebugLevel(num: number){
+    this.logger.logLevel = num;
+  }
+
   setSpeed(speed: number) {
     this.log('Set speed to ' + speed.toString(), 0);
     this.settings.electronic.speed = speed;
@@ -381,11 +385,13 @@ class Robot {
   }
 
   stopWheels() {
+    this.log('Stop wheels', 1)
     control.runInBackground(() => this.getMotor(Side.Left).stop());
     control.runInBackground(() => this.getMotor(Side.Right).stop());
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
+    this.log('Move wheel', 1)
     this.runMotor(side, speed);
     this.pause(until);
     if (stop) this.stopMotor(side);
@@ -397,6 +403,7 @@ class Robot {
     until: () => boolean,
     stop: boolean = true
   ) {
+    this.log('Move wheels', 1)
     this.runMotor(Side.Left, speedLeft);
     this.runMotor(Side.Right, speedRight);
     this.pause(until);
@@ -404,6 +411,7 @@ class Robot {
   }
 
   moveAhead(until: () => boolean, stop: boolean = true) {
+    this.log('Move ahead', 3)
     this.setRegulation(true);
     this.moveWheels(
       this.settings.electronic.speed,
@@ -414,6 +422,7 @@ class Robot {
   }
 
   moveLine(until: () => boolean, stop: boolean = true) {
+    this.log('Move line', 3)
     this.setRegulation(false);
     let regulator = new PID(
       this.settings.line.kP,
@@ -433,6 +442,7 @@ class Robot {
   }
 
   moveLineOne(sensor: Side, side: Side, until: () => boolean, stop: boolean = true) {
+    this.log('Move line one', 3)
     this.setRegulation(false);
     let regulator = new PID(
       this.settings.line.kP,
@@ -453,6 +463,7 @@ class Robot {
   }
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
+    this.log('Rotate', 3)
     this.setRegulation(true);
     let k = this.getSideK(rotateSide);
     let data = this.calcRotateData(degrees, pointRotate, k);
@@ -463,18 +474,21 @@ class Robot {
   }
 
   untilTime(time: number): () => boolean {
+    this.log('Until time', 2)
     let startTime = control.millis();
     return () => {
       return control.millis() - startTime > time;
     };
   }
   untilBlack(side: Side) {
+    this.log('Until black', 2)
     return () => {
       return this.readDataFromSensor(side) < this.settings.line.black;
     };
   }
 
   untilDegrees(side: Side, dgr: number): () => boolean {
+    this.log('Until degrees')
     let startPos = this.readTacho(side);
     return () => {
       return (
@@ -484,6 +498,7 @@ class Robot {
   }
 
   untilCm(side: Side, cm: number): () => boolean {
+    this.log('Until cm')
     let k = this.settings.construction.wheelDiameter * Math.PI;
     return this.untilDegrees(side, (cm / k) * 360);
   }
