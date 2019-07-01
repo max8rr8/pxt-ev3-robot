@@ -83,6 +83,7 @@ class Logger {
     this.logLevel = logLevel;
     this.pos = 0;
     this.logList = [
+      '',
       'Robot----------------',
       '-------- pxt     ----',
       '-M------ pxt-ev3 ----',
