@@ -39,6 +39,86 @@ let robot = new Robot({
 });
 ```
 
+You can also change speed directly in program
+
+```ts
+robot.setSpeed(10);
+```
+
+## Logger
+
+There are log in this lib you can log to it using
+
+```ts
+robot.log('test');
+```
+
+and this message will be sended to log
+
+You can read log in file located in //home/root/lms2012/prjs/log.txt on ev3 and on screen using button up and button down to scroll it
+
+Log is created using class Logger you can access to it in
+
+```ts
+robot.logger;
+```
+
+In log you can see time time starts from last call of logger.setTime
+
+```ts
+robot.logger.setTime();
+```
+
+You can also wait until smth using logger.wait and it will display message on screen
+
+```ts
+robot.logger.wait(() => false, 'Infinity wait');
+```
+
+There also method to send smth to file
+
+```ts
+robot.logger.logToFile('This string will be in file');
+```
+
+And method display used to display log, but don`t use it, it calls automaticly
+
+## Usefull program things
+
+Whe you start your robot and wait for press enter button, you can use startCycle, it will wait unyil button wil be pressed and call logger.setTime
+
+```ts
+robot.startCycle();
+```
+
+There are also method for convert number(0-10) to sound
+
+```ts
+music.playSoundEffect(robot.getSoundFromNumber(0));
+```
+
+When you reach point in your program for example collectFirst, moveToZone, scan use robot.point it will write in log about that and beep two times
+
+```ts
+robot.point('scan');
+```
+
+When your robot do something uncorrect use robot.breakPoint, with number it will say number aloud, log to log, and pause for 3 seconds
+
+```ts
+robot.breakPoint('breakpoint');
+```
+
+There also setDebugLevel it need for what your robot do, debug levels
+4 - normal
+3 - log moveLine, moveAhead, rotate
+2 - log until methods
+1 - log moveWheel, moveWheels, stopWheels
+
+```ts
+robot.setDebugLevel(3);
+```
+
 ## Pause
 
 This lib use until methods. There are method pause that takes function, and stop when function return false, example:
@@ -193,6 +273,7 @@ robot.rotate(Side.Right, 45);
 
 There are third parameter point rotate
 It specifies point around which you want to turn
+
 ```
 Examples
 - robot parts
@@ -206,3 +287,68 @@ Examples
 |-------+---|  |-----------|           +
 ```
 
+## PID
+
+There are class that representate pid regulator used in moveLine
+
+```ts
+//Example creation with kP=0.3, kI=0, kD=0.3
+let regulator = new PID(0.3, 0, 0.3);
+```
+
+When you want to get new correction from error use update
+
+```ts
+regulator.update(5);
+```
+
+## Manipulator
+
+For controlling manipulaters better use manipulator
+
+```ts
+//Create manipulator with speed -30
+let manipulator = new Manipulator(-30);
+```
+
+To move manipulator to break use toBreak
+
+```ts
+//Rotates for speed -30
+manipulator.toBreak(ManipulatorDirection.normal);
+
+//Rotates for speed 30
+manipulator.toBreak(ManipulatorDirection.inverted);
+```
+
+Or to use to any pos from start use toPos
+
+```ts
+//Move to pos 20
+manipultor.toPos(20);
+```
+
+You can pass second parameter as false if you do not want to stop programm execution 
+
+## Scanner
+When you want to scan correct data use scanner class, it wil scan only when see one data more than samplesFilter
+
+```ts
+// Example creation
+let scanner = new Scanner({
+    onDetected: (data: number) => robot.log(data.toString()),
+    scan: ()=>sensors.color1.color(),
+    samplesFilter: 3
+})
+```
+To proccess one meagurement use read
+```ts
+scanner.read()
+```
+
+But you can use scanner in parallel thread, using start and stop
+```ts
+scanner.start()
+pause(2000)
+scanner.stop()
+```
