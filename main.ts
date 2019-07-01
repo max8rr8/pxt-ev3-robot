@@ -267,7 +267,7 @@ class Robot {
     lM.reset();
     lM.setPauseOnRun(false);
     lM.setBrake(true);
-    let rM = this.settings.electronic.leftMotor;
+    let rM = this.settings.electronic.rightMotor;
     rM.stop();
     rM.reset();
     rM.setPauseOnRun(false);
@@ -430,7 +430,7 @@ class Robot {
     this.log('Move ahead', 3);
     this.setRegulation(true);
     this.moveWheels(
-      this.settings.electronic.speed,
+        this.settings.electronic.speed,
       this.settings.electronic.speed,
       until,
       stop
