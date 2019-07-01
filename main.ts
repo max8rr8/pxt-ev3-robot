@@ -126,7 +126,7 @@ class Logger {
     if (this.logList.length >= 12) this.pos++;
     let time = (control.millis() - this.startTime) / 1000;
     this.logList.push('[' + time.toString().substr(0, 5) + '] ' + text);
-    this.logToFile('[' + time.toString() + '] ' + text);
+    this.logToFile('[' + time.toString().substr(0, 5) + '] ' + text);
     this.display();
   }
 
