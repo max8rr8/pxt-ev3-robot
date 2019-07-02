@@ -404,6 +404,7 @@ class Robot {
     this.log('Stop wheels', 1);
     control.runInBackground(() => this.getMotor(Side.Left).stop());
     control.runInBackground(() => this.getMotor(Side.Right).stop());
+    pause(250)
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
