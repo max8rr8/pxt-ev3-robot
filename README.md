@@ -242,6 +242,15 @@ robot.moveAhead(robot.untilCm(Side.Left, 10));
 robot.moveAhead(robot.untilBlack(Side.Left), false);
 ```
 
+There also move backward
+```ts
+
+// Move ahead until 10 cm
+robot.moveBackward(robot.untilCm(Side.Left, 10));
+//You can also specify if you want to stop motors
+robot.moveBackward(robot.untilBlack(Side.Left), false);
+```
+
 You can also move using two sensors and line
 
 ```ts
