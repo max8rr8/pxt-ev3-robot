@@ -203,8 +203,9 @@ class Manipulator {
     this.motor.setBrake(true);
     this.motor.stop();
     if (this.motor.angle() == dgr) return;
-    let k = this.motor.angle() - dgr > 0 ? 1 : -1;
-    this.motor.run(this.speed * k, Math.abs(this.motor.angle() - dgr), MoveUnit.Degrees);
+    let k = this.motor.angle() - dgr > 0 ? -1 : 1;
+    let r = this.speed < 0 ? -1 : 1
+    this.motor.run(this.speed * k, Math.abs(this.motor.angle() * r - dgr), MoveUnit.Degrees);
     if (pause) this.motor.pauseUntilReady();
   }
 }
