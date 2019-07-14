@@ -331,8 +331,8 @@ class Robot {
   }
 
   setRegulation(stat: boolean) {
-    this.settings.electronic.rightMotor.setRegulated(stat);
-    this.settings.electronic.leftMotor.setRegulated(stat);
+    this.getMotor(Side.Left).setRegulated(stat);
+    this.getMotor(Side.Right).setRegulated(stat);
   }
 
   pause(until: () => boolean) {
