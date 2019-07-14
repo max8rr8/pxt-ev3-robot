@@ -17,6 +17,7 @@ interface electronicSettings {
   leftMotor: Output;
   rightSensor: sensors.ColorSensor;
   leftSensor: sensors.ColorSensor;
+  isLarge: boolean;
   alfaSensor?: sensors.ColorSensor;
   betaSensor?: sensors.ColorSensor;
   speed: number;
