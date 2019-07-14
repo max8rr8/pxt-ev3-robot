@@ -13,10 +13,11 @@
 // import '../base/shims';
 
 interface electronicSettings {
-  rightMotor: motors.Motor;
-  leftMotor: motors.Motor;
+  rightMotor: Output;
+  leftMotor: Output;
   rightSensor: sensors.ColorSensor;
   leftSensor: sensors.ColorSensor;
+  isLarge: boolean;
   alfaSensor?: sensors.ColorSensor;
   betaSensor?: sensors.ColorSensor;
   speed: number;
@@ -259,21 +260,32 @@ class Scanner {
 class Robot {
   settings: RobotSettings;
   logger: Logger;
+
+  leftMotor: motors.Motor;
+  rightMotor: motors.Motor;
+  bothMotors: motors.Motor;
+
   constructor(settings: RobotSettings) {
     this.settings = settings;
     this.logger = new Logger();
     this.logger.display();
-    let lM = this.settings.electronic.leftMotor;
-    lM.stop();
+
+    let lM = new motors.Motor(this.settings.electronic.leftMotor, this.settings.electronic.isLarge);
+    let rM = new motors.Motor(this.settings.electronic.rightMotor, this.settings.electronic.isLarge);
+    let bM = new motors.Motor(this.settings.electronic.leftMotor | this.settings.electronic.rightMotor, this.settings.electronic.isLarge);
+    
     lM.reset();
     lM.setPauseOnRun(false);
     lM.setBrake(true);
-    let rM = this.settings.electronic.rightMotor;
-    rM.stop();
     rM.reset();
     rM.setPauseOnRun(false);
     rM.setBrake(true);
+    bM.setBrake(true)
+    bM.stop()
 
+    this.leftMotor = lM
+    this.rightMotor = rM
+    this.bothMotors = bM 
     // this.getSensor(Side.Left).reset()
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
@@ -357,9 +369,9 @@ class Robot {
   }
 
   getMotor(side: Side): motors.Motor {
-    if (side == Side.Left) return this.settings.electronic.leftMotor;
-    if (side == Side.Right) return this.settings.electronic.rightMotor;
-    return motors.largeA;
+    if (side == Side.Left) return this.leftMotor;
+    if (side == Side.Right) return this.rightMotor;
+    return this.bothMotors;
   }
 
   getMotorK(side: Side): number {
@@ -403,8 +415,7 @@ class Robot {
 
   stopWheels() {
     this.log('Stop wheels', 1);
-    control.runInBackground(() => this.getMotor(Side.Left).stop());
-    control.runInBackground(() => this.getMotor(Side.Right).stop());
+    this.bothMotors.stop()
     pause(250)
   }
 
