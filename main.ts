@@ -205,7 +205,7 @@ class Manipulator {
     this.motor.stop();
     if (this.motor.angle() == dgr) return;
     let k = this.motor.angle() - dgr > 0 ? -1 : 1;
-    let r = this.speed < 0 ? -1 : 1
+    let r = this.speed < 0 ? -1 : 1;
     this.motor.run(this.speed * k, Math.abs(this.motor.angle() * r - dgr), MoveUnit.Degrees);
     if (pause) this.motor.pauseUntilReady();
   }
@@ -270,22 +270,31 @@ class Robot {
     this.logger = new Logger();
     this.logger.display();
 
-    let lM = new motors.Motor(this.settings.electronic.leftMotor, this.settings.electronic.isLarge);
-    let rM = new motors.Motor(this.settings.electronic.rightMotor, this.settings.electronic.isLarge);
-    let bM = new motors.Motor(this.settings.electronic.leftMotor | this.settings.electronic.rightMotor, this.settings.electronic.isLarge);
-    
+    let lM = new motors.Motor(
+      this.settings.electronic.leftMotor,
+      this.settings.electronic.isLarge
+    );
+    let rM = new motors.Motor(
+      this.settings.electronic.rightMotor,
+      this.settings.electronic.isLarge
+    );
+    let bM = new motors.Motor(
+      this.settings.electronic.leftMotor | this.settings.electronic.rightMotor,
+      this.settings.electronic.isLarge
+    );
+
     lM.reset();
     lM.setPauseOnRun(false);
     lM.setBrake(true);
     rM.reset();
     rM.setPauseOnRun(false);
     rM.setBrake(true);
-    bM.setBrake(true)
-    bM.stop()
+    bM.setBrake(true);
+    bM.stop();
 
-    this.leftMotor = lM
-    this.rightMotor = rM
-    this.bothMotors = bM 
+    this.leftMotor = lM;
+    this.rightMotor = rM;
+    this.bothMotors = bM;
     // this.getSensor(Side.Left).reset()
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
@@ -415,8 +424,8 @@ class Robot {
 
   stopWheels() {
     this.log('Stop wheels', 1);
-    this.bothMotors.stop()
-    pause(250)
+    this.bothMotors.stop();
+    pause(250);
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
@@ -441,9 +450,9 @@ class Robot {
 
   moveAhead(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(false);
     this.moveWheels(
-        this.settings.electronic.speed,
+      this.settings.electronic.speed,
       this.settings.electronic.speed,
       until,
       stop
@@ -452,10 +461,10 @@ class Robot {
 
   moveBackward(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(false);
     this.moveWheels(
-        -this.settings.electronic.speed,
-        -this.settings.electronic.speed,
+      -this.settings.electronic.speed,
+      -this.settings.electronic.speed,
       until,
       stop
     );
