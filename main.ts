@@ -13,10 +13,11 @@
 // import '../base/shims';
 
 interface electronicSettings {
-  rightMotor: motors.Motor;
-  leftMotor: motors.Motor;
+  rightMotor: Output;
+  leftMotor: Output;
   rightSensor: sensors.ColorSensor;
   leftSensor: sensors.ColorSensor;
+  isLarge: boolean;
   alfaSensor?: sensors.ColorSensor;
   betaSensor?: sensors.ColorSensor;
   speed: number;
@@ -205,7 +206,7 @@ class Manipulator {
     this.motor.stop();
     if (this.motor.angle() == dgr) return;
     let k = this.motor.angle() - dgr > 0 ? -1 : 1;
-    let r = this.speed < 0 ? -1 : 1
+    let r = this.speed < 0 ? -1 : 1;
     this.motor.run(this.speed * k, Math.abs(this.motor.angle() * r - dgr), MoveUnit.Degrees);
     if (pause) this.motor.pauseUntilReady();
   }
@@ -260,21 +261,41 @@ class Scanner {
 class Robot {
   settings: RobotSettings;
   logger: Logger;
+
+  leftMotor: motors.Motor;
+  rightMotor: motors.Motor;
+  bothMotors: motors.Motor;
+
   constructor(settings: RobotSettings) {
     this.settings = settings;
     this.logger = new Logger();
     this.logger.display();
-    let lM = this.settings.electronic.leftMotor;
-    lM.stop();
+
+    let lM = new motors.Motor(
+      this.settings.electronic.leftMotor,
+      this.settings.electronic.isLarge
+    );
+    let rM = new motors.Motor(
+      this.settings.electronic.rightMotor,
+      this.settings.electronic.isLarge
+    );
+    let bM = new motors.Motor(
+      this.settings.electronic.leftMotor | this.settings.electronic.rightMotor,
+      this.settings.electronic.isLarge
+    );
+
     lM.reset();
     lM.setPauseOnRun(false);
     lM.setBrake(true);
-    let rM = this.settings.electronic.rightMotor;
-    rM.stop();
     rM.reset();
     rM.setPauseOnRun(false);
     rM.setBrake(true);
+    bM.setBrake(true);
+    bM.stop();
 
+    this.leftMotor = lM;
+    this.rightMotor = rM;
+    this.bothMotors = bM;
     // this.getSensor(Side.Left).reset()
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
@@ -358,9 +379,9 @@ class Robot {
   }
 
   getMotor(side: Side): motors.Motor {
-    if (side == Side.Left) return this.settings.electronic.leftMotor;
-    if (side == Side.Right) return this.settings.electronic.rightMotor;
-    return motors.largeA;
+    if (side == Side.Left) return this.leftMotor;
+    if (side == Side.Right) return this.rightMotor;
+    return this.bothMotors;
   }
 
   getMotorK(side: Side): number {
@@ -405,9 +426,8 @@ class Robot {
 
   stopWheels() {
     this.log('Stop wheels', 1);
-    control.runInBackground(() => this.getMotor(Side.Left).stop());
-    control.runInBackground(() => this.getMotor(Side.Right).stop());
-    pause(250)
+    this.bothMotors.stop();
+    pause(250);
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
@@ -432,9 +452,9 @@ class Robot {
 
   moveAhead(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(false);
     this.moveWheels(
-        this.settings.electronic.speed,
+      this.settings.electronic.speed,
       this.settings.electronic.speed,
       until,
       stop
@@ -443,10 +463,10 @@ class Robot {
 
   moveBackward(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(false);
     this.moveWheels(
-        -this.settings.electronic.speed,
-        -this.settings.electronic.speed,
+      -this.settings.electronic.speed,
+      -this.settings.electronic.speed,
       until,
       stop
     );

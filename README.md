@@ -11,8 +11,9 @@ let robot = new Robot({
     wheelDiameter: 8.16
   },
   electronic: {
-    leftMotor: motors.mediumB,
-    rightMotor: motors.mediumC,
+    leftMotor: Output.B,
+    rightMotor: Output.C,
+    isLarge: false,
     leftSensor: sensors.color2,
     rightSensor: sensors.color3,
     alfaSensor: sensors.color1, // Use on only when you have more than 2 sensors
