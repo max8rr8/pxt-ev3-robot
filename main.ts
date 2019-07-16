@@ -412,7 +412,7 @@ class Robot {
   }
 
   readTacho(side: Side): number {
-    if(side = Side.Both) return (
+    if(side == Side.Both) return (
       this.getMotor(Side.Left).angle() / this.getMotorK(Side.Left) + 
       this.getMotor(Side.Right).angle() / this.getMotorK(Side.Right)
     ) / 2
