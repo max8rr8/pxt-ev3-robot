@@ -531,7 +531,7 @@ class Robot {
     this.log('Rotate line', 3)
     let k = this.getSideK(rotateSide) * this.settings.electronic.speed
     this.setRegulation(false)
-    this.moveWheels(-k, k, this.untilBlack(linesSensor))
+    this.moveWheels(k, k, this.untilBlack(linesSensor))
   }
 
   untilTime(time: number): () => boolean {
