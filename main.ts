@@ -527,6 +527,13 @@ class Robot {
     this.moveWheels(data[0], data[1], this.untilDegrees(untilData[0], untilData[1]));
   }
 
+  rotateLine(rotateSide: Side, linesSensor: Side){
+    this.log('Rotate line', 3)
+    let k = this.getSideK(rotateSide) * this.settings.electronic.speed
+    this.setRegulation(false)
+    this.moveWheels(-k, k, this.untilBlack(linesSensor))
+  }
+
   untilTime(time: number): () => boolean {
     this.log('Until time', 2);
     let startTime = control.millis();
