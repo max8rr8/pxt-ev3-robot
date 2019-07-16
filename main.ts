@@ -63,7 +63,8 @@ enum Side {
   Left,
   Right,
   Alfa,
-  Beta
+  Beta,
+  Both
 }
 
 enum ManipulatorDirection {
@@ -390,6 +391,7 @@ class Robot {
   }
 
   readTacho(side: Side): number {
+    if(side = Side.Both) return (this.readTacho(Side.Left) + this.readTacho(Side.Right)) / 2
     return this.getMotor(side).angle() / this.getMotorK(side);
   }
 
