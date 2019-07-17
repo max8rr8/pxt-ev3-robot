@@ -412,10 +412,12 @@ class Robot {
   }
 
   readTacho(side: Side): number {
-    if(side == Side.Both) return (
-      this.getMotor(Side.Left).angle() / this.getMotorK(Side.Left) + 
-      this.getMotor(Side.Right).angle() / this.getMotorK(Side.Right)
-    ) / 2
+    if (side == Side.Both)
+      return (
+        (this.getMotor(Side.Left).angle() / this.getMotorK(Side.Left) +
+          this.getMotor(Side.Right).angle() / this.getMotorK(Side.Right)) /
+        2
+      );
     return this.getMotor(side).angle() / this.getMotorK(side);
   }
 
@@ -527,11 +529,11 @@ class Robot {
     this.moveWheels(data[0], data[1], this.untilDegrees(untilData[0], untilData[1]));
   }
 
-  rotateLine(rotateSide: Side, linesSensor: Side){
-    this.log('Rotate line', 3)
-    let k = this.getSideK(rotateSide) * this.settings.electronic.speed
-    this.setRegulation(false)
-    this.moveWheels(-k, k, this.untilBlack(linesSensor))
+  rotateLine(rotateSide: Side, linesSensor: Side) {
+    this.log('Rotate line', 3);
+    let k = this.getSideK(rotateSide) * this.settings.electronic.speed;
+    this.setRegulation(false);
+    this.moveWheels(-k, k, this.untilBlack(linesSensor));
   }
 
   untilTime(time: number): () => boolean {
