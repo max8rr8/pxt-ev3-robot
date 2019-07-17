@@ -261,6 +261,7 @@ class Scanner {
 class Robot {
   settings: RobotSettings;
   logger: Logger;
+  rotateRobotControl: boolean;
 
   leftMotor: motors.Motor;
   rightMotor: motors.Motor;
@@ -270,6 +271,7 @@ class Robot {
     this.settings = settings;
     this.logger = new Logger();
     this.logger.display();
+    this.rotateRobotControl = true;
 
     let lM = new motors.Motor(
       this.settings.electronic.leftMotor,
@@ -300,6 +302,10 @@ class Robot {
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
     // this.readDataFromSensor(Side.Right);
+  }
+
+  disableRobotMotorControl() {
+    this.rotateRobotControl = false;
   }
 
   startCycle() {
@@ -520,7 +526,7 @@ class Robot {
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
     this.log('Rotate', 3);
-    this.setRegulation(true);
+    this.setRegulation(this.rotateRobotControl);
     let k = this.getSideK(rotateSide);
     let data = this.calcRotateData(degrees, pointRotate, k);
     let untilData: number[] = [];
