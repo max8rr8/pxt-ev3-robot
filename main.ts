@@ -438,7 +438,7 @@ class Robot {
   stopWheels() {
     this.log('Stop wheels', 1);
     this.setRegulation(false)
-    this.bothMotors.setRegulation(false)
+    this.bothMotors.setRegulated(false)
     this.bothMotors.stop();
     pause(250);
   }
