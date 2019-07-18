@@ -437,6 +437,8 @@ class Robot {
 
   stopWheels() {
     this.log('Stop wheels', 1);
+    this.setRegulation(false)
+    this.bothMotors.setRegulation(false)
     this.bothMotors.stop();
     pause(250);
   }
@@ -463,7 +465,7 @@ class Robot {
 
   moveAhead(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(false);
+    this.setRegulation(true);
     this.moveWheels(
       this.settings.electronic.speed,
       this.settings.electronic.speed,
@@ -474,7 +476,7 @@ class Robot {
 
   moveBackward(until: () => boolean, stop: boolean = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(false);
+    this.setRegulation(true);
     this.moveWheels(
       -this.settings.electronic.speed,
       -this.settings.electronic.speed,
@@ -526,7 +528,7 @@ class Robot {
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
     this.log('Rotate', 3);
-    this.setRegulation(this.rotateRobotControl);
+    this.setRegulation(true);
     let k = this.getSideK(rotateSide);
     let data = this.calcRotateData(degrees, pointRotate, k);
     let untilData: number[] = [];
@@ -538,7 +540,7 @@ class Robot {
   rotateLine(rotateSide: Side, linesSensor: Side) {
     this.log('Rotate line', 3);
     let k = this.getSideK(rotateSide) * this.settings.electronic.speed;
-    this.setRegulation(false);
+    this.setRegulation(true);
     this.moveWheels(-k, k, this.untilBlack(linesSensor));
   }
 
