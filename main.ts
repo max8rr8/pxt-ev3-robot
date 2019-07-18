@@ -493,7 +493,7 @@ class Robot {
       this.settings.line.kI,
       this.settings.line.kD
     );
-    let speed = this.settings.electronic.speed;
+    let speed = this.settings.electronic.speed + 5;
     this.pause(() => {
       let err: number =
         this.readDataFromSensor(Side.Left) - this.readDataFromSensor(Side.Right);
@@ -513,7 +513,7 @@ class Robot {
       this.settings.line.kI,
       this.settings.line.kD
     );
-    let speed = this.settings.electronic.speed;
+    let speed = this.settings.electronic.speed + 5;
     let line = this.settings.line.black + this.settings.line.white;
     line *= 0.5;
     this.pause(() => {
