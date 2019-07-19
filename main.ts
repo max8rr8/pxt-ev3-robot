@@ -463,9 +463,9 @@ class Robot {
     if (stop) this.stopWheels();
   }
 
-  moveAhead(until: () => boolean, stop: boolean = true) {
+  moveAhead(until: () => boolean, stop: boolean = true, isRegulted = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(isRegulted);
     this.moveWheels(
       this.settings.electronic.speed,
       this.settings.electronic.speed,
@@ -474,9 +474,9 @@ class Robot {
     );
   }
 
-  moveBackward(until: () => boolean, stop: boolean = true) {
+  moveBackward(until: () => boolean, stop: boolean = true, isRegulted = true) {
     this.log('Move ahead', 3);
-    this.setRegulation(true);
+    this.setRegulation(isRegulted);
     this.moveWheels(
       -this.settings.electronic.speed,
       -this.settings.electronic.speed,
