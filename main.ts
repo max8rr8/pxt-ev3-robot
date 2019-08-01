@@ -554,7 +554,11 @@ class Robot {
   untilBlack(side: Side) {
     this.log('Until black', 2);
     return () => {
-      return this.readDataFromSensor(side) < this.settings.line.black;
+      if(side !== Side.Both)
+        return this.readDataFromSensor(side) < this.settings.line.black;
+      else 
+        return this.readDataFromSensor(Side.Right) < this.settings.line.black &&
+               this.readDataFromSensor(Side.Left) < this.settings.line.black 
     };
   }
 
