@@ -555,7 +555,7 @@ class Robot {
     this.moveWheels(data[0], data[1], this.untilBoth(
       this.untilDegrees(untilData[0], untilData[1]),
       this.untilBlack(lineSensor)
-    );
+    ));
   }
 
   untilTime(time: number): () => boolean {
