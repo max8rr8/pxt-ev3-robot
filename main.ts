@@ -577,4 +577,13 @@ class Robot {
     let k = this.settings.construction.wheelDiameter * Math.PI;
     return this.untilDegrees(side, (cm / k) * 360);
   }
+
+  untilBoth(first: () => boolean, second: () => boolean): () => boolean{
+    let stat = 0
+    return () => {
+      if(stat == 1) return second()
+      if(stat == 0) if(first()) stat = 1
+      return false;
+    }
+  }
 }
