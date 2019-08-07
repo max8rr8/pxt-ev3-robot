@@ -544,20 +544,6 @@ class Robot {
     this.moveWheels(-k, k, this.untilBlack(linesSensor));
   }
 
-  rotateDouble(rotateSide: Side, degrees = 90, lineSensor: Side, pointRotate = 0) {
-    this.log('Rotate double', 3);
-    this.setRegulation(true);
-    let k = this.getSideK(rotateSide);
-    let data = this.calcRotateData(degrees, pointRotate, k);
-    let untilData: number[] = [];
-    if (Math.abs(data[0]) >= Math.abs(data[1])) untilData = [Side.Left, data[2]];
-    if (Math.abs(data[1]) > Math.abs(data[0])) untilData = [Side.Right, data[3]];
-    this.moveWheels(data[0], data[1], this.untilBoth(
-      this.untilDegrees(untilData[0], untilData[1]),
-      this.untilBlack(lineSensor)
-    ));
-  }
-
   untilTime(time: number): () => boolean {
     this.log('Until time', 2);
     let startTime = control.millis();
