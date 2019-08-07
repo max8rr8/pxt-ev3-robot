@@ -526,7 +526,7 @@ class Robot {
     if (stop) this.stopWheels();
   }
 
-  rotate(rotateSide: Side, degrees = 90, pointRotate = 0) {
+  rotate(rotateSide: Side, degrees = 90, pointRotate = 0, stop = true) {
     this.log('Rotate', 3);
     this.setRegulation(true);
     let k = this.getSideK(rotateSide);
@@ -534,7 +534,7 @@ class Robot {
     let untilData: number[] = [];
     if (Math.abs(data[0]) >= Math.abs(data[1])) untilData = [Side.Left, data[2]];
     if (Math.abs(data[1]) > Math.abs(data[0])) untilData = [Side.Right, data[3]];
-    this.moveWheels(data[0], data[1], this.untilDegrees(untilData[0], untilData[1]));
+    this.moveWheels(data[0], data[1], this.untilDegrees(untilData[0], untilData[1]), stop);
   }
 
   rotateLine(rotateSide: Side, linesSensor: Side) {
