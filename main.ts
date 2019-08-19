@@ -437,8 +437,8 @@ class Robot {
 
   stopWheels() {
     this.log('Stop wheels', 1);
-    this.setRegulation(false)
-    this.bothMotors.setRegulated(false)
+    this.setRegulation(false);
+    this.bothMotors.setRegulated(false);
     this.bothMotors.stop();
     pause(250);
   }
@@ -457,9 +457,11 @@ class Robot {
     stop: boolean = true
   ) {
     this.log('Move wheels', 1);
-    this.runMotor(Side.Left, speedLeft);
-    this.runMotor(Side.Right, speedRight);
-    this.pause(until);
+    this.pause(() => {
+      this.runMotor(Side.Left, speedLeft);
+      this.runMotor(Side.Right, speedRight);
+      return until();
+    });
     if (stop) this.stopWheels();
   }
 
@@ -554,11 +556,12 @@ class Robot {
   untilBlack(side: Side) {
     this.log('Until black', 2);
     return () => {
-      if(side !== Side.Both)
-        return this.readDataFromSensor(side) < this.settings.line.black;
-      else 
-        return this.readDataFromSensor(Side.Right) < this.settings.line.black &&
-               this.readDataFromSensor(Side.Left) < this.settings.line.black 
+      if (side !== Side.Both) return this.readDataFromSensor(side) < this.settings.line.black;
+      else
+        return (
+          this.readDataFromSensor(Side.Right) < this.settings.line.black &&
+          this.readDataFromSensor(Side.Left) < this.settings.line.black
+        );
     };
   }
 
@@ -578,12 +581,12 @@ class Robot {
     return this.untilDegrees(side, (cm / k) * 360);
   }
 
-  untilBoth(first: () => boolean, second: () => boolean): () => boolean{
-    let stat = 0
+  untilBoth(first: () => boolean, second: () => boolean): () => boolean {
+    let stat = 0;
     return () => {
-      if(stat == 1) return second()
-      if(stat == 0) if(first()) stat = 1
+      if (stat == 1) return second();
+      if (stat == 0) if (first()) stat = 1;
       return false;
-    }
+    };
   }
 }
