@@ -60,6 +60,16 @@ interface ScannerSettings {
   onDetected: (data: number) => void;
 }
 
+interface StepOptions {
+  power?: number;
+  speed?: number; // either speed or power has to be present
+  step1: number;
+  step2: number;
+  step3: number;
+  useSteps?: boolean; // otherwise use milliseconds
+  useBrake?: boolean;
+}
+
 enum Side {
   Left,
   Right,
@@ -431,6 +441,30 @@ class Robot {
     this.getMotor(side).run(speed * this.getMotorK(side));
   }
 
+  step(opts: StepOptions) {
+    const out = this.settings.electronic.leftMotor | this.settings.electronic.rightMotor;
+    let op = opts.useSteps ? DAL.opOutputStepSpeed : DAL.opOutputTimeSpeed;
+    let speed = opts.speed;
+    if (undefined == speed) {
+      speed = opts.power;
+      op = opts.useSteps ? DAL.opOutputStepPower : DAL.opOutputTimePower;
+      if (undefined == speed) return;
+    }
+    speed = Math.clamp(-100, 100, speed);
+
+    const b = output.createBuffer(17);
+    b.setNumber(NumberFormat.UInt8LE, 0, op);
+    b.setNumber(NumberFormat.UInt8LE, 1, out);
+    b.setNumber(NumberFormat.Int8LE, 2, speed);
+    b.setNumber(NumberFormat.Int32LE, 4 + 4 * 0, opts.step1);
+    b.setNumber(NumberFormat.Int32LE, 4 + 4 * 1, opts.step2);
+    b.setNumber(NumberFormat.Int32LE, 4 + 4 * 2, opts.step3);
+    b.setNumber(NumberFormat.Int8LE, 4 + 4 * 3, !!opts.useBrake ? 1 : 0);
+    motors.writePWM(b);
+
+    this.bothMotors.pauseUntilReady();
+  }
+
   stopMotor(side: Side) {
     this.getMotor(side).stop();
   }
@@ -440,7 +474,7 @@ class Robot {
     this.setRegulation(false);
     this.bothMotors.setRegulated(false);
     this.bothMotors.stop();
-    if(settle) pause(250);
+    if (settle) pause(250);
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
@@ -463,6 +497,28 @@ class Robot {
       return until();
     });
     this.stopWheels(stop);
+  }
+
+  speedGain(dgr: number) {
+    this.step({
+      speed: this.settings.electronic.speed,
+      step1: dgr,
+      step2: 0,
+      step3: 0,
+      useSteps: true,
+      useBrake: false
+    });
+  }
+
+  softStop(dgr: number, speed: number) {
+    this.step({
+      speed: this.settings.electronic.speed,
+      step1: 0,
+      step2: 0,
+      step3: dgr,
+      useSteps: true,
+      useBrake: false
+    });
   }
 
   moveAhead(until: () => boolean, stop: boolean = true, isRegulted = true) {
