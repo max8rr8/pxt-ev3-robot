@@ -435,12 +435,12 @@ class Robot {
     this.getMotor(side).stop();
   }
 
-  stopWheels() {
+  stopWheels(settle = true) {
     this.log('Stop wheels', 1);
     this.setRegulation(false);
     this.bothMotors.setRegulated(false);
     this.bothMotors.stop();
-    pause(250);
+    if(settle) pause(250);
   }
 
   moveWheel(side: Side, speed: number, until: () => boolean, stop: boolean = true) {
@@ -462,7 +462,7 @@ class Robot {
       this.runMotor(Side.Right, speedRight);
       return until();
     });
-    if (stop) this.stopWheels();
+    this.stopWheels(stop);
   }
 
   moveAhead(until: () => boolean, stop: boolean = true, isRegulted = true) {
@@ -504,7 +504,7 @@ class Robot {
       this.runMotor(Side.Right, speed - res);
       return until();
     });
-    if (stop) this.stopWheels();
+    this.stopWheels(stop);
   }
 
   moveLineOne(sensor: Side, side: Side, until: () => boolean, stop: boolean = true) {
@@ -525,7 +525,7 @@ class Robot {
       this.runMotor(Side.Right, speed - res);
       return until();
     });
-    if (stop) this.stopWheels();
+    this.stopWheels(stop);
   }
 
   rotate(rotateSide: Side, degrees = 90, pointRotate = 0, stop = true) {
