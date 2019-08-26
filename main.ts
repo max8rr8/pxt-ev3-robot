@@ -71,11 +71,11 @@ interface StepOptions {
 }
 
 enum Side {
-  Left,
-  Right,
-  Alfa,
-  Beta,
-  Both
+  Left = 0,
+  Right = 1,
+  Alfa = 2,
+  Beta = 3,
+  Both = 4
 }
 
 enum ManipulatorDirection {
@@ -277,6 +277,8 @@ class Robot {
   rightMotor: motors.Motor;
   bothMotors: motors.Motor;
 
+  sensorsStat: number[];
+
   constructor(settings: RobotSettings) {
     this.settings = settings;
     this.logger = new Logger();
@@ -308,10 +310,30 @@ class Robot {
     this.leftMotor = lM;
     this.rightMotor = rM;
     this.bothMotors = bM;
+
+    this.sensorsStat = [0, 0, 0, 0];
     // this.getSensor(Side.Left).reset()
     // this.getSensor(Side.Right).reset()
     // this.readDataFromSensor(Side.Left);
     // this.readDataFromSensor(Side.Right);
+  }
+
+  startScanCycle() {
+    const aSensor = this.getSensor(Side.Alfa);
+    const bSensor = this.getSensor(Side.Alfa);
+    const lSensor = this.getSensor(Side.Alfa);
+    const rSensor = this.getSensor(Side.Alfa);
+
+    const aSensorK = this.getSensorK(Side.Alfa);
+    const bSensorK = this.getSensorK(Side.Alfa);
+    const lSensorK = this.getSensorK(Side.Alfa);
+    const rSensorK = this.getSensorK(Side.Alfa);
+    control.runInParallel(() => {
+      if (aSensor) this.sensorsStat[Side.Alfa] = aSensor.reflectedLight() * aSensorK;
+      if (bSensor) this.sensorsStat[Side.Beta] = bSensor.reflectedLight() * bSensorK;
+      this.sensorsStat[Side.Left] = lSensor.reflectedLight() * lSensorK;
+      this.sensorsStat[Side.Right] = rSensor.reflectedLight() * rSensorK;
+    });
   }
 
   disableRobotMotorControl() {
@@ -424,7 +446,7 @@ class Robot {
   }
 
   readDataFromSensor(side: Side): number {
-    return this.getSensor(side).reflectedLight() * this.getSensorK(side);
+    return this.sensorsStat[side];
   }
 
   readTacho(side: Side): number {
