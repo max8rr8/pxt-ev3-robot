@@ -320,19 +320,21 @@ class Robot {
 
   startScanCycle() {
     const aSensor = this.getSensor(Side.Alfa);
-    const bSensor = this.getSensor(Side.Alfa);
-    const lSensor = this.getSensor(Side.Alfa);
-    const rSensor = this.getSensor(Side.Alfa);
+    const bSensor = this.getSensor(Side.Beta);
+    const lSensor = this.getSensor(Side.Left);
+    const rSensor = this.getSensor(Side.Right);
 
     const aSensorK = this.getSensorK(Side.Alfa);
-    const bSensorK = this.getSensorK(Side.Alfa);
-    const lSensorK = this.getSensorK(Side.Alfa);
-    const rSensorK = this.getSensorK(Side.Alfa);
+    const bSensorK = this.getSensorK(Side.Beta);
+    const lSensorK = this.getSensorK(Side.Left);
+    const rSensorK = this.getSensorK(Side.Right);
     control.runInParallel(() => {
-      if (aSensor) this.sensorsStat[Side.Alfa] = aSensor.reflectedLight() * aSensorK;
-      if (bSensor) this.sensorsStat[Side.Beta] = bSensor.reflectedLight() * bSensorK;
-      this.sensorsStat[Side.Left] = lSensor.reflectedLight() * lSensorK;
-      this.sensorsStat[Side.Right] = rSensor.reflectedLight() * rSensorK;
+      forever(() => {
+        if (aSensor) this.sensorsStat[Side.Alfa] = aSensor.reflectedLight() * aSensorK;
+        if (bSensor) this.sensorsStat[Side.Beta] = bSensor.reflectedLight() * bSensorK;
+        this.sensorsStat[Side.Left] = lSensor.reflectedLight() * lSensorK;
+        this.sensorsStat[Side.Right] = rSensor.reflectedLight() * rSensorK;
+      });
     });
   }
 
@@ -342,6 +344,7 @@ class Robot {
 
   startCycle() {
     this.logger.wait(() => brick.buttonEnter.wasPressed(), 'Press enter');
+    this.startScanCycle()
     pause(100);
     this.logger.setTime();
     this.point('START');
